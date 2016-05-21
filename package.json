@@ -1,0 +1,25 @@
+{
+  "name": "multiplayer",
+  "version": "0.1.0",
+  "description": "Not yet",
+  "main": "A video player capable of displaying multiple subtitles",
+  "scripts": {
+    "start": "electron main.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://gitlab.com/brunofin/multiplayer.git"
+  },
+  "keywords": [
+    "multiplayer",
+  ],
+  "author": "Bruno Finger",
+  "bugs": {
+    "url": "https://gitlab.com/brunofin/multiplayer/issues"
+  },
+  "homepage": "https://gitlab.com/brunofin/multiplayer",
+  "bitcoin": "1CQ2qrLY1YidxWKhE3s1o2bPmmQWfXNCHD",
+  "devDependencies": {
+    "electron-prebuilt": "^1.1.1"
+  }
+}
