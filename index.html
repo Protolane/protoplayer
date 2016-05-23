@@ -1,15 +1,32 @@
 <!DOCTYPE html>
-<html>
+<html ng-app="Multiplayer">
   <head>
     <meta charset="UTF-8">
     <title>Hello World!</title>
+    <link rel="stylesheet" href="styles.min.css" />
   </head>
-  <body>
+  <body ng-controller="Test">
+    <video id="video-el" class="video-js vjs-default-skin" controls
+     preload="auto" width="{{ x }}" height="{{ y }}" poster="sample.png"
+     data-setup='{}'>
+      <source src="sample.mp4" type="video/mp4">
+      <p class="vjs-no-js">
+        To view this video please enable JavaScript, and consider upgrading to a web browser
+        that <a href="http://videojs.com/html5-video-support/" target="_blank">supports HTML5 video</a>
+      </p>
+    </video>
+
+
+    <div id="other">
+
     <h1>Hello World!</h1>
-    <!-- All of the Node.js APIs are available in this renderer process. -->
-    We are using node <script>document.write(process.versions.node)</script>,
-    Chromium <script>document.write(process.versions.chrome)</script>,
-    and Electron <script>document.write(process.versions.electron)</script>.
+    We are using node {{ node }},
+    Chromium {{ chrome }},
+    Electron {{ electron}},
+    and Angular {{ angular }}.
+
+    <md-button class="md-primary">OK!</md-button>
+  </div>
   </body>
 
   <script>
