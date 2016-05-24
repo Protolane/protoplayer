@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html ng-app="Multiplayer">
+  <head>
+    <meta charset="UTF-8">
+    <title>Hello World!</title>
+    <link rel="stylesheet" href="styles.min.css" />
+  </head>
+
+  <body>
+
+    <mp-player src="../sample.mkv">
+      <mp-controls></mp-controls>
+    </mp-player>
+
+  </body>
+
+  <script>
+    // You can also require other files to run in this process
+    require('angular');
+    require('angular-animate');
+    require('angular-aria');
+    require('angular-messages');
+    require('angular-route');
+    require('angular-material');
+    require('./scripts/Multiplayer.js');
+  </script>
+</html>

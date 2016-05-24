@@ -34,7 +34,6 @@
   },
   "dependencies": {
     "angular": "1.5.0",
-    "angular-material": "1.0.8",
-    "video.js": "5.9.2"
+    "angular-material": "1.0.8"
   }
 }

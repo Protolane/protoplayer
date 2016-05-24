@@ -8,14 +8,14 @@ var gulp = require('gulp'),
 gulp.task('scss', function() {
   gutil.log('Generating CSS');
 
-  return gulp.src('scss/multiplayer.scss')
+  return gulp.src('app/scss/multiplayer.scss')
       .pipe(sourcemaps.init())
       .pipe(sass({
         style: 'compressed'
       }).on('error', sass.logError))
       .pipe(rename('styles.min.css'))
       .pipe(sourcemaps.write('.'))
-      .pipe(gulp.dest('.'));
+      .pipe(gulp.dest('./app'));
 });
 
 gulp.task('default', ['scss'], function() {
@@ -30,5 +30,5 @@ gulp.task('default', ['scss'], function() {
         gutil.log(data);
       });
     });
-    gulp.watch('scss/**/*.scss', ['scss']);
+    gulp.watch('app/scss/**/*.scss', ['scss']);
 });
