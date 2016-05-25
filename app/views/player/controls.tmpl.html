@@ -1,3 +1,7 @@
 <md-button class="md-primary" ng-click="playPause()">Play</md-button>
 
-<md-slider aria-label="Seek" flex min="0" class="md-primary"></md-slider>
+<span style="color: white;">{{ getCurrentTime() | secondsToDateTime | date:'HH:mm:ss' }}</span>
+
+<md-slider aria-label="Seek" flex min="0" max="100" step="0.1" md-discrete="true" ng-model="seekPosition" class="md-primary"></md-slider>
+
+<span style="color: white;">{{ getDuration() | secondsToDateTime | date:'HH:mm:ss' }}</span>

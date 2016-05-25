@@ -27,6 +27,7 @@
     wrapEvent('loadedmetadata');
     wrapEvent('loadstart');
     wrapEvent('pause');
+    wrapEvent('click');
     wrapEvent('play');
     wrapEvent('playing');
     wrapEvent('progress');
@@ -39,152 +40,162 @@
     wrapEvent('volumechange');
     wrapEvent('waiting');
 
-    return {
+    var Player = {
       getPlayer: function() {
         return player;
       },
 
       getSource: function() {
-        return this.getPlayer().src;
+        return Player.getPlayer().src;
       },
 
       setSource: function(src) {
         source.src = src;
-        this.getPlayer().load();
+        Player.getPlayer().load();
       },
 
       play: function() {
-        this.getPlayer().play();
+        Player.getPlayer().play();
       },
 
       pause: function() {
-        this.getPlayer().pause();
+        Player.getPlayer().pause();
+      },
+
+      playPause: function() {
+        if (Player.isPaused()) {
+          Player.play();
+        } else {
+          Player.pause();
+        }
       },
 
       getAudioTracks: function() {
-        return this.getPlayer().audioTracks;
+        return Player.getPlayer().audioTracks;
       },
 
       isAutoplay: function() {
-        return this.getPlayer().autoplay;
+        return Player.getPlayer().autoplay;
       },
 
       setAutoplay: function(autoplay) {
-        this.getPlayer().autoplay = autoplay;
+        Player.getPlayer().autoplay = autoplay;
       },
 
       getBuffered: function() {
-        return this.getPlayer().buffered;
+        return Player.getPlayer().buffered;
       },
 
       getCurrentSrc: function() {
-        return this.getPlayer().currentSrc;
+        return Player.getPlayer().currentSrc;
       },
 
       getCurrentTime: function() {
-        return this.getPlayer().currentTime;
+        return Player.getPlayer().currentTime;
       },
 
       setCurrentTime: function(currentTime) {
-        this.getPlayer().currentTime = currentTime;
+        Player.getPlayer().currentTime = currentTime;
       },
 
       isDefaultMuted: function() {
-        return this.getPlayer().defaultMuted;
+        return Player.getPlayer().defaultMuted;
       },
 
       setDefaultMuted: function(defaultMuted) {
-        this.getPlayer().defaultMuted = defaultMuted;
+        Player.getPlayer().defaultMuted = defaultMuted;
       },
 
       getDefaultPlaybackRate: function() {
-        return this.getPlayer().defaultPlaybackRate;
+        return Player.getPlayer().defaultPlaybackRate;
       },
 
       setDefaultPlaybackRate: function(defaultPlaybackRate) {
-        this.getPlayer().defaultPlaybackRate = defaultPlaybackRate;
+        Player.getPlayer().defaultPlaybackRate = defaultPlaybackRate;
       },
 
       getDuration: function() {
-        return this.getPlayer().duration;
+        return Player.getPlayer().duration;
       },
 
       isEnded: function() {
-        return this.getPlayer().ended;
+        return Player.getPlayer().ended;
       },
 
       getError: function() {
-        return this.getPlayer().error;
+        return Player.getPlayer().error;
       },
 
       isLoop: function() {
-        return this.getPlayer().loop;
+        return Player.getPlayer().loop;
       },
 
       setLoop: function(loop) {
-        this.getPlayer().loop = loop;
+        Player.getPlayer().loop = loop;
       },
 
       isMuted: function() {
-        return this.getPlayer().muted;
+        return Player.getPlayer().muted;
       },
 
       setMuted: function(muted) {
-        this.getPlayer().muted = muted;
+        Player.getPlayer().muted = muted;
       },
 
       getNetworkState: function() {
-        return this.getPlayer().networkState;
+        return Player.getPlayer().networkState;
       },
 
       isPaused: function() {
-        return this.getPlayer().paused;
+        return Player.getPlayer().paused;
       },
 
       getPlaybackRate: function() {
-        return this.getPlayer().playbackRate;
+        return Player.getPlayer().playbackRate;
       },
 
       setPlaybackRate: function(playbackRate) {
-        this.getPlayer().playbackRate = playbackRate;
+        Player.getPlayer().playbackRate = playbackRate;
       },
 
       getPlayed: function() {
-        return this.getPlayer().played;
+        return Player.getPlayer().played;
       },
 
       isPreload: function() {
-        return this.getPlayer().preload;
+        return Player.getPlayer().preload;
       },
 
       setPreload: function(preload) {
-        this.getPlayer().preload = preload;
+        Player.getPlayer().preload = preload;
       },
 
       getReadyState: function() {
-        return this.getPlayer().readyState;
+        return Player.getPlayer().readyState;
       },
 
       getSeekable: function() {
-        return this.getPlayer().seekable;
+        return Player.getPlayer().seekable;
       },
 
       isSeeking: function() {
-        return this.getPlayer().seeking;
+        return Player.getPlayer().seeking;
       },
 
       getStartDate: function() {
-        return this.getPlayer().startDate;
+        return Player.getPlayer().startDate;
       },
 
       getVolume: function() {
-        return this.getPlayer().volume;
+        return Player.getPlayer().volume;
       },
 
       setVolume: function(volume) {
-        this.getPlayer().volume = volume;
+        Player.getPlayer().volume = volume;
       }
     }
+
+    return Player;
   }]);
 
   app.directive('mpPlayer', ['Player', function(Player) {
@@ -198,6 +209,10 @@
         var player = Player.getPlayer()
         el[0].appendChild(player);
 
+        $scope.$on('mp-click', function() {
+          Player.playPause();
+        });
+
         $scope.$watch('src', function(src) {
           Player.setSource(src);
         });
@@ -205,23 +220,62 @@
     }
   }]);
 
-  app.directive('mpControls', ['Player', function(Player) {
+  app.filter('secondsToDateTime', [function() {
+    return function(seconds) {
+        return new Date(1970, 0, 1).setSeconds(seconds);
+    };
+  }]);
+
+  app.directive('mpControls', ['$interval', 'Player', function($interval, Player) {
     return {
       templateUrl: './views/player/controls.tmpl.html',
       link: function($scope, el) {
         el[0].classList.add('layout-align-space-between-center',  'layout-row');
 
-        $scope.$on('mp-play', function(event, data) {
-          console.log(event, data);
-        });
+        var seekTimer = null;
+
+        $scope.seekPosition = 0;
+
+        $scope.getDuration = function() {
+          return Player.getDuration();
+        };
+
+        $scope.getCurrentTime = function() {
+          return Player.getCurrentTime();
+        };
 
         $scope.playPause = function() {
-          if (Player.isPaused()) {
-            Player.play();
-          } else {
-            Player.pause();
+          Player.playPause();
+        };
+
+        $scope.$on('mp-pause', function(event, data) {
+          $interval.cancel(seekTimer);
+        });
+
+        $scope.$on('mp-play', function(event, data) {
+          $interval.cancel(seekTimer);
+          seekTimer = $interval(function() {
+            stopWatchingSeekingBar();
+            $scope.seekPosition = ($scope.getCurrentTime() / $scope.getDuration()) * 100;
+            watchSeekingBar();
+          }, 250);
+        });
+
+        var sw = null;
+        var watchSeekingBar = function() {
+          sw = $scope.$watch('seekPosition', function(newValue, oldValue) {
+            if (newValue !== oldValue) {
+              Player.setCurrentTime(Player.getDuration() * (newValue / 100));
+            }
+          });
+        };
+
+        var stopWatchingSeekingBar = function() {
+          if (sw) {
+            sw();
           }
         };
+
       }
     }
   }])
