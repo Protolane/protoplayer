@@ -1,7 +1,23 @@
-<md-button class="md-primary" ng-click="playPause()">Play</md-button>
+<md-button aria-label="Play/pause" class="md-icon-button md-primary" ng-click="playPause()">
+  <md-icon md-svg-src="{{ getPlayPauseIcon() }}"></md-icon>
+</md-button>
 
-<span style="color: white;">{{ getCurrentTime() | secondsToDateTime | date:'HH:mm:ss' }}</span>
+<div layout-margin class="timer">
+  <span layout-fill>{{ getCurrentTime() | secondsToDateTime | date:'HH:mm:ss' }}</span>
+  <span layout-fill> / </span>
+  <span layout-fill>{{ getDuration() | secondsToDateTime | date:'HH:mm:ss' }}</span>
+</div>
 
 <md-slider aria-label="Seek" flex min="0" max="100" step="0.1" md-discrete="true" ng-model="seekPosition" class="md-primary"></md-slider>
 
-<span style="color: white;">{{ getDuration() | secondsToDateTime | date:'HH:mm:ss' }}</span>
+<md-button aria-label="Play/pause" class="md-icon-button md-primary" ng-click="subtitles()">
+  <md-icon md-svg-src="./img/controls/subtitles.svg"></md-icon>
+</md-button>
+
+<md-button aria-label="Play/pause" class="md-icon-button md-primary" ng-click="mute()">
+  <md-icon md-svg-src="./img/controls/volume_down.svg"></md-icon>
+</md-button>
+
+<md-button aria-label="Play/pause" class="md-icon-button md-primary" ng-click="fullscreen()">
+  <md-icon md-svg-src="./img/controls/fullscreen.svg"></md-icon>
+</md-button>

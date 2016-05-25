@@ -1,8 +1,10 @@
 @import 'node_modules/angular-material/angular-material.scss';
 @import 'variables';
 @import 'player';
+@import 'sanitize';
 
 body {
   background-color: $body-bg-color;
   overflow: hidden;
+  width: 100%;
 }

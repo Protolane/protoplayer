@@ -54,6 +54,10 @@
         Player.getPlayer().load();
       },
 
+      fullscreen: function() {
+        Player.getPlayer().requestFullscreen();
+      },
+
       play: function() {
         Player.getPlayer().play();
       },
@@ -236,6 +240,14 @@
 
         $scope.seekPosition = 0;
 
+        $scope.getPlayPauseIcon = function() {
+          if (Player.isPaused()) {
+            return './img/controls/play_arrow.svg';
+          } else {
+            return './img/controls/pause.svg';
+          }
+        }
+
         $scope.getDuration = function() {
           return Player.getDuration();
         };
@@ -246,6 +258,17 @@
 
         $scope.playPause = function() {
           Player.playPause();
+        };
+
+        var fullscreen = false;
+        $scope.fullscreen = function() {
+          if (fullscreen) {
+            document.webkitExitFullscreen();
+            fullscreen = false;
+          } else {
+            document.body.webkitRequestFullScreen();
+            fullscreen = true;
+          }
         };
 
         $scope.$on('mp-pause', function(event, data) {
@@ -278,6 +301,6 @@
 
       }
     }
-  }])
+  }]);
 
 })(angular)

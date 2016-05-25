@@ -3,5 +3,15 @@ mp-controls {
   z-index: 2;
   bottom: 0;
   left: 0;
-  right: 0
+  right: 0;
+
+  .timer {
+    span:first-child {
+      color: white;
+    }
+
+    span {
+      color: grey;
+    }
+  }
 }

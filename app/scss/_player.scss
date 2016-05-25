@@ -1,2 +1,18 @@
 @import 'player/player';
 @import 'player/controls';
+
+[mp-autohide] {
+  transition: 1s;
+}
+
+[mp-autohide][mp-direction="down"] {
+  transform: translate(0px, 100%);
+}
+
+[mp-autohide][mp-direction="up"] {
+  transform: translate(0px, -100%);
+}
+
+*:hover *[mp-autohide] {
+  transform: translate(0px, 0px) !important;
+}
