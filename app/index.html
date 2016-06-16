@@ -9,7 +9,7 @@
   <body>
 
     <mp-player src="../sample.mkv">
-      <mp-controls mp-autohide mp-direction="down"></mp-controls>
+      <mp-media-controls  mp-direction="down"></mp-controls>
     </mp-player>
 
   </body>
@@ -22,6 +22,8 @@
     require('angular-messages');
     require('angular-route');
     require('angular-material');
+    require('./scripts/Controls.js');
+    require('./scripts/Subtitles.js');
     require('./scripts/Multiplayer.js');
   </script>
 </html>

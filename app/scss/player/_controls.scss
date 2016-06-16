@@ -15,3 +15,7 @@ mp-controls {
     }
   }
 }
+
+mp-media-controls {
+  @extend mp-controls;
+}
