@@ -13,12 +13,12 @@
 
             <md-input-container flex>
               <label>Number of subtitles to display</label>
-              <input ng-model="subtitlesNumber" type="number" min="0">
+              <input ng-model="subtitleSettings.numberOfSubtitles" type="number" min="0">
             </md-input-container>
 
             <h2 class="md-subhead">Languages to search for subtitles</h2>
 
-            <md-chips ng-model="selectedLanguages" md-autocomplete-snap
+            <md-chips ng-model="subtitleSettings.languagesToSearch" md-autocomplete-snap
                       md-require-match="true">
               <md-autocomplete
                   md-selected-item="selectedLanguage"
@@ -38,8 +38,8 @@
           </md-content>
         </md-tab>
 
-        <md-tab ng-repeat="subtitle in range(subtitlesNumber)" label="Subtitles {{ subtitle }}">
-          <md-content class="md-padding" layout="column" ng-controller="FontSettingsCtrl as ctrl">
+        <md-tab ng-repeat="subtitle in subtitleSettings.specificSettings" label="Subtitles {{ $index + 1}}">
+          <md-content class="md-padding" layout="column" ng-controller="FontSettingsCtrl as ctrl" ng-init="ctrl.initValues(subtitle)">
             <div flex layout="row">
 
               <div layout="column" flex="50">
@@ -48,13 +48,13 @@
                 <div layout="row" layout-align="start start">
                   <md-input-container flex="15">
                     <label>Color</label>
-                    <input ng-model="ctrl.selectedColor" type="color">
+                    <input ng-model="subtitle.selectedColor" type="color">
                   </md-input-container>
 
                   <md-input-container flex>
                     <label>Font</label>
 
-                    <md-select ng-model="ctrl.selectedFont" ng-change="ctrl.resetSettings()">
+                    <md-select ng-model="subtitle.selectedFont" ng-change="ctrl.resetSettings(subtitle)">
                       <md-option ng-repeat="font in availableFonts" ng-value="font" ng-class="{ '{{ 'wf-' + font.name.replace(' ', '_').toLowerCase() }}': true }" ng-selected="$first">
                         {{ font.name }}
                       </md-option>
@@ -63,28 +63,28 @@
 
                   <md-input-container flex="15">
                     <label>Size</label>
-                    <input ng-model="ctrl.selectedSize" type="number" min="5">
+                    <input ng-model="subtitle.selectedSize" type="number" min="5">
                   </md-input-container>
                 </div>
 
                 <div layout="row" layout-align="start center">
-                  <md-checkbox ng-model="ctrl.useBold" ng-disabled="!ctrl.selectedFont.bold">
+                  <md-checkbox ng-model="subtitle.useBold" ng-disabled="!subtitle.selectedFont.bold">
                     <strong>Bold</strong>
-                    <md-tooltip ng-if="!ctrl.selectedFont.bold">This font doesn't have bold styles</md-tooltip>
+                    <md-tooltip ng-if="!subtitle.selectedFont.bold">This font doesn't have bold styles</md-tooltip>
                   </md-checkbox>
 
-                  <md-checkbox ng-model="ctrl.useItalic" ng-disabled="!ctrl.selectedFont.italic">
+                  <md-checkbox ng-model="subtitle.useItalic" ng-disabled="!subtitle.selectedFont.italic">
                     <em>Italic</em>
-                    <md-tooltip ng-if="!ctrl.selectedFont.italic">This font doesn't have italic styles</md-tooltip>
+                    <md-tooltip ng-if="!subtitle.selectedFont.italic">This font doesn't have italic styles</md-tooltip>
                   </md-checkbox>
 
-                  <md-checkbox ng-model="ctrl.useOutline">
+                  <md-checkbox ng-model="subtitle.useOutline">
                     Outline
                   </md-checkbox>
 
                   <md-input-container flex="15">
                     <label>Color</label>
-                    <input ng-model="ctrl.outlineColor" type="color" ng-disabled="!ctrl.useOutline">
+                    <input ng-model="subtitle.outlineColor" type="color" ng-disabled="!subtitle.useOutline">
                   </md-input-container>
                 </div>
 
@@ -94,7 +94,7 @@
                 <h2 class="md-subhead">Position on screen</h2>
                 <md-input-container>
                   <label>Align with</label>
-                  <md-select ng-model="ctrl.alignTop">
+                  <md-select ng-model="subtitle.alignTop">
                     <md-option ng-value="true">
                       Top
                     </md-option>
@@ -107,7 +107,7 @@
 
                 <md-slider-container>
                   <span>Vertical offset</span>
-                  <md-slider flex min="0" max="0.85" step="0.01" ng-model="ctrl.relativeVerticalAlign" aria-label="offset">
+                  <md-slider flex min="0" max="0.85" step="0.01" ng-model="subtitle.relativeVerticalAlign" aria-label="offset">
                   </md-slider>
                 </md-slider-container>
               </div>
@@ -115,8 +115,8 @@
 
             <div layout="column">
               <h2 class="md-subhead">Preview</h2>
-              <div class="fontPreviewArea" ng-class="getComputedFont(ctrl).containerSettings" flex>
-                <span ng-style="getComputedFont(ctrl).cssSettings">This is how your subtitles will be displayed.</span>
+              <div class="fontPreviewArea" ng-class="getComputedFont(subtitle).containerSettings" flex>
+                <span ng-style="getComputedFont(subtitle).cssSettings">This is how your subtitles will be displayed.</span>
               </div>
             </div>
 

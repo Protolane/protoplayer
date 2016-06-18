@@ -1,5 +1,5 @@
 (function(angular) {
-  var app = angular.module('PlayerControls', ['Subtitles', 'WebFonts']);
+  var app = angular.module('PlayerControls', ['Subtitles', 'WebFonts', 'Settings']);
 
   app.filter('secondsToDateTime', [function() {
     return function(seconds) {
@@ -8,23 +8,26 @@
   }]);
 
   app.controller('FontSettingsCtrl', [function() {
-    this.selectedFont = null;
-    this.selectedColor = '#FFFFFF';
-    this.selectedSize = 26;
-    this.useBold = false;
-    this.useItalic = false;
-    this.useOutline = true;
-    this.outlineColor = '#000000';
-    this.alignTop = true;
-    this.relativeVerticalAlign = 0.0;
 
-    this.resetSettings = function() {
-      this.useBold = false;
-      this.useItalic = false;
+    this.resetSettings = function(subtitle) {
+      subtitle.useBold = false;
+      subtitle.useItalic = false;
     };
+
+    this.initValues = function(subtitle) {
+      subtitle.selectedFont = null;
+      subtitle.selectedColor = '#FFFFFF';
+      subtitle.selectedSize = 26;
+      subtitle.useBold = false;
+      subtitle.useItalic = false;
+      subtitle.useOutline = true;
+      subtitle.outlineColor = '#000000';
+      subtitle.alignTop = true;
+      subtitle.relativeVerticalAlign = 0.0;
+    }
   }]);
 
-  app.directive('mpPlayerControls', ['$mdDialog', 'Player', 'LanguageCodesService', 'WebFontsSvc', function($mdDialog, Player, LanguageCodesService, WebFontsSvc) {
+  app.directive('mpPlayerControls', ['$mdDialog', 'Settings', 'Player', 'LanguageCodesService', 'WebFontsSvc', function($mdDialog, Settings, Player, LanguageCodesService, WebFontsSvc) {
     return {
       templateUrl: './views/player/player-controls.tmpl.html',
       link: function($scope, el) {
@@ -34,7 +37,20 @@
           $mdDialog.show({
             controller: function($scope, $mdDialog) {
 
+              $scope.subtitleSettings = Settings.subtitles;
+              $scope.languages = LanguageCodesService.getLanguageCodes();
               $scope.availableFonts = WebFontsSvc.listAvailableFonts();
+
+              $scope.$watch('subtitleSettings.numberOfSubtitles', function(numberOfSubtitles) {
+                if (numberOfSubtitles > Settings.subtitles.specificSettings.length) {
+                  var toAdd = numberOfSubtitles - Settings.subtitles.specificSettings.length;
+                  for (var i = 0; i < toAdd; i++) {
+                    Settings.subtitles.specificSettings.push({});
+                  }
+                } else if (numberOfSubtitles < Settings.subtitles.specificSettings.length){
+                  Settings.subtitles.specificSettings.splice(numberOfSubtitles -1, Settings.subtitles.specificSettings.length);
+                }
+              });
 
               $scope.getComputedFont = function(settings) {
                 if (!settings.selectedFont) {
@@ -69,34 +85,7 @@
                   containerSettings: containerSettings,
                   cssSettings: cssSettings
                 }
-              }
-
-              $scope.range = function(start, stop, step) {
-                  if (typeof stop == 'undefined') {
-                      // one param defined
-                      stop = start;
-                      start = 0;
-                  }
-
-                  if (typeof step == 'undefined') {
-                      step = 1;
-                  }
-
-                  if ((step > 0 && start >= stop) || (step < 0 && start <= stop)) {
-                      return [];
-                  }
-
-                  var result = [];
-                  for (var i = start; step > 0 ? i < stop : i > stop; i += step) {
-                      result.push(i);
-                  }
-
-                  return result;
               };
-
-              $scope.languages = LanguageCodesService.getLanguageCodes();
-              $scope.selectedLanguages = [];
-              $scope.subtitlesNumber = 0;
 
               $scope.querySearch = function(query) {
                 var results = query ? $scope.languages.filter(function(lang) {
