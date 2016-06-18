@@ -9,7 +9,8 @@
   <body>
 
     <mp-player src="../sample.mkv">
-      <mp-media-controls  mp-direction="down"></mp-controls>
+      <mp-player-controls mp-direction="up"></mp-player-controls>
+      <mp-media-controls mp-direction="down"></mp-media-controls>
     </mp-player>
 
   </body>
@@ -22,6 +23,7 @@
     require('angular-messages');
     require('angular-route');
     require('angular-material');
+    require('./scripts/WebFonts.js');
     require('./scripts/Controls.js');
     require('./scripts/Subtitles.js');
     require('./scripts/Multiplayer.js');

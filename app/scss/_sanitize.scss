@@ -14,3 +14,7 @@ md-slider .md-track {
 md-slider .md-thumb-container {
   z-index: 2;
 }
+
+md-tab-content md-content {
+  overflow: hidden;
+}

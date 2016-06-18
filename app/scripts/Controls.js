@@ -1,9 +1,132 @@
 (function(angular) {
-  var app = angular.module('PlayerControls', []);
+  var app = angular.module('PlayerControls', ['Subtitles', 'WebFonts']);
 
   app.filter('secondsToDateTime', [function() {
     return function(seconds) {
         return new Date(1970, 0, 1).setSeconds(seconds);
+    };
+  }]);
+
+  app.controller('FontSettingsCtrl', [function() {
+    this.selectedFont = null;
+    this.selectedColor = '#FFFFFF';
+    this.selectedSize = 26;
+    this.useBold = false;
+    this.useItalic = false;
+    this.useOutline = true;
+    this.outlineColor = '#000000';
+    this.alignTop = true;
+    this.relativeVerticalAlign = 0.0;
+
+    this.resetSettings = function() {
+      this.useBold = false;
+      this.useItalic = false;
+    };
+  }]);
+
+  app.directive('mpPlayerControls', ['$mdDialog', 'Player', 'LanguageCodesService', 'WebFontsSvc', function($mdDialog, Player, LanguageCodesService, WebFontsSvc) {
+    return {
+      templateUrl: './views/player/player-controls.tmpl.html',
+      link: function($scope, el) {
+        el[0].classList.add('layout-align-space-between-center',  'layout-row');
+
+        $scope.subtitles = function(ev) {
+          $mdDialog.show({
+            controller: function($scope, $mdDialog) {
+
+              $scope.availableFonts = WebFontsSvc.listAvailableFonts();
+
+              $scope.getComputedFont = function(settings) {
+                if (!settings.selectedFont) {
+                  return;
+                }
+
+                var containerSettings = {};
+                containerSettings['wf-' + settings.selectedFont.name.replace(' ', '_').toLowerCase()] = true;
+                containerSettings['layout-column'] = true;
+                containerSettings['layout-align-' + (settings.alignTop ? 'start' : 'end' ) + '-center'] = true;
+
+
+                var cssSettings = {};
+                cssSettings.color = settings.selectedColor;
+                cssSettings.position = 'relative';
+                cssSettings['font-size'] = settings.selectedSize + 'px';
+                cssSettings[(settings.alignTop ? 'top' : 'bottom' )] = (settings.relativeVerticalAlign * 100) + '%';
+
+                if (settings.useBold) {
+                  cssSettings['font-weight'] = 'bold';
+                }
+
+                if (settings.useItalic) {
+                  cssSettings['font-style'] = 'italic';
+                }
+
+                if (settings.useOutline) {
+                  cssSettings['text-shadow'] = '-1px 0 ' + settings.outlineColor + ', 0 1px ' + settings.outlineColor + ', 1px 0 ' + settings.outlineColor + ', 0 -1px ' + settings.outlineColor;
+                }
+
+                return {
+                  containerSettings: containerSettings,
+                  cssSettings: cssSettings
+                }
+              }
+
+              $scope.range = function(start, stop, step) {
+                  if (typeof stop == 'undefined') {
+                      // one param defined
+                      stop = start;
+                      start = 0;
+                  }
+
+                  if (typeof step == 'undefined') {
+                      step = 1;
+                  }
+
+                  if ((step > 0 && start >= stop) || (step < 0 && start <= stop)) {
+                      return [];
+                  }
+
+                  var result = [];
+                  for (var i = start; step > 0 ? i < stop : i > stop; i += step) {
+                      result.push(i);
+                  }
+
+                  return result;
+              };
+
+              $scope.languages = LanguageCodesService.getLanguageCodes();
+              $scope.selectedLanguages = [];
+              $scope.subtitlesNumber = 0;
+
+              $scope.querySearch = function(query) {
+                var results = query ? $scope.languages.filter(function(lang) {
+                  return (lang.alpha2.toLowerCase().includes(query.toLowerCase()) || lang.English.toLowerCase().includes(query.toLowerCase()));
+                }) : [];
+                return results;
+              };
+
+              $scope.hide = function() {
+                $mdDialog.hide();
+              };
+              $scope.cancel = function() {
+                $mdDialog.cancel();
+              };
+              $scope.answer = function(answer) {
+                $mdDialog.hide(answer);
+              };
+            },
+            templateUrl: './views/player/subtitles-dialog.tmpl.html',
+            parent: angular.element(document.body),
+            targetEvent: ev,
+            clickOutsideToClose:false
+          }).then(function(answer) {
+            $scope.status = 'You said the information was "' + answer + '".';
+          }, function() {
+            $scope.status = 'You cancelled the dialog.';
+          });
+        };
+
+      }
     };
   }]);
 

@@ -1,0 +1,141 @@
+<md-dialog id="subtitles-dialog" aria-label="Subtitles">
+  <form>
+    <md-toolbar>
+      <div class="md-toolbar-tools">
+        <h2>Subtitles settings</h2>
+      </div>
+    </md-toolbar>
+
+    <md-dialog-content style="max-width:800px;max-height:810px; ">
+      <md-tabs md-dynamic-height md-border-bottom>
+        <md-tab label="Global settings">
+          <md-content class="md-padding" layout="column">
+
+            <md-input-container flex>
+              <label>Number of subtitles to display</label>
+              <input ng-model="subtitlesNumber" type="number" min="0">
+            </md-input-container>
+
+            <h2 class="md-subhead">Languages to search for subtitles</h2>
+
+            <md-chips ng-model="selectedLanguages" md-autocomplete-snap
+                      md-require-match="true">
+              <md-autocomplete
+                  md-selected-item="selectedLanguage"
+                  md-search-text="searchLanguage"
+                  md-items="item in querySearch(searchLanguage)"
+                  md-item-text="item.English"
+                  placeholder="Search for a language">
+                <span md-highlight-text="searchLanguage">{{item.English}} ({{item.alpha2}})</span>
+              </md-autocomplete>
+              <md-chip-template>
+                <span>
+                  <strong>{{$chip.English}}</strong>
+                  <em>({{$chip.alpha2}})</em>
+                </span>
+              </md-chip-template>
+            </md-chips>
+          </md-content>
+        </md-tab>
+
+        <md-tab ng-repeat="subtitle in range(subtitlesNumber)" label="Subtitles {{ subtitle }}">
+          <md-content class="md-padding" layout="column" ng-controller="FontSettingsCtrl as ctrl">
+            <div flex layout="row">
+
+              <div layout="column" flex="50">
+                <h2 class="md-subhead">Font settings</h2>
+
+                <div layout="row" layout-align="start start">
+                  <md-input-container flex="15">
+                    <label>Color</label>
+                    <input ng-model="ctrl.selectedColor" type="color">
+                  </md-input-container>
+
+                  <md-input-container flex>
+                    <label>Font</label>
+
+                    <md-select ng-model="ctrl.selectedFont" ng-change="ctrl.resetSettings()">
+                      <md-option ng-repeat="font in availableFonts" ng-value="font" ng-class="{ '{{ 'wf-' + font.name.replace(' ', '_').toLowerCase() }}': true }" ng-selected="$first">
+                        {{ font.name }}
+                      </md-option>
+                    </md-select>
+                  </md-input-container>
+
+                  <md-input-container flex="15">
+                    <label>Size</label>
+                    <input ng-model="ctrl.selectedSize" type="number" min="5">
+                  </md-input-container>
+                </div>
+
+                <div layout="row" layout-align="start center">
+                  <md-checkbox ng-model="ctrl.useBold" ng-disabled="!ctrl.selectedFont.bold">
+                    <strong>Bold</strong>
+                    <md-tooltip ng-if="!ctrl.selectedFont.bold">This font doesn't have bold styles</md-tooltip>
+                  </md-checkbox>
+
+                  <md-checkbox ng-model="ctrl.useItalic" ng-disabled="!ctrl.selectedFont.italic">
+                    <em>Italic</em>
+                    <md-tooltip ng-if="!ctrl.selectedFont.italic">This font doesn't have italic styles</md-tooltip>
+                  </md-checkbox>
+
+                  <md-checkbox ng-model="ctrl.useOutline">
+                    Outline
+                  </md-checkbox>
+
+                  <md-input-container flex="15">
+                    <label>Color</label>
+                    <input ng-model="ctrl.outlineColor" type="color" ng-disabled="!ctrl.useOutline">
+                  </md-input-container>
+                </div>
+
+              </div>
+
+              <div layout="column" flex="50">
+                <h2 class="md-subhead">Position on screen</h2>
+                <md-input-container>
+                  <label>Align with</label>
+                  <md-select ng-model="ctrl.alignTop">
+                    <md-option ng-value="true">
+                      Top
+                    </md-option>
+
+                    <md-option ng-value="false">
+                      Bottom
+                    </md-option>
+                  </md-select>
+                </md-input-container>
+
+                <md-slider-container>
+                  <span>Vertical offset</span>
+                  <md-slider flex min="0" max="0.85" step="0.01" ng-model="ctrl.relativeVerticalAlign" aria-label="offset">
+                  </md-slider>
+                </md-slider-container>
+              </div>
+            </div>
+
+            <div layout="column">
+              <h2 class="md-subhead">Preview</h2>
+              <div class="fontPreviewArea" ng-class="getComputedFont(ctrl).containerSettings" flex>
+                <span ng-style="getComputedFont(ctrl).cssSettings">This is how your subtitles will be displayed.</span>
+              </div>
+            </div>
+
+          </md-content>
+        </md-tab>
+
+
+      </md-tabs>
+    </md-dialog-content>
+
+    <md-dialog-actions layout="row">
+      <span flex></span>
+      <md-button ng-click="answer('not useful')" >
+        Cancel
+      </md-button>
+      <md-button ng-click="answer('useful')" style="margin-right:20px;" >
+        OK
+      </md-button>
+    </md-dialog-actions>
+
+  </form>
+</md-dialog>

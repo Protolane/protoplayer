@@ -1,5 +1,14 @@
 @import 'player/player';
 @import 'player/controls';
+@import 'player/subtitles';
+
+[mp-direction="down"] {
+  bottom: 0px;
+}
+
+[mp-direction="up"] {
+  top: 0px;
+}
 
 [mp-autohide] {
   transition: 1s;

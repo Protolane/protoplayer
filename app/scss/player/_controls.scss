@@ -1,7 +1,6 @@
 mp-controls {
   position: absolute;
   z-index: 2;
-  bottom: 0;
   left: 0;
   right: 0;
 
@@ -16,6 +15,16 @@ mp-controls {
   }
 }
 
-mp-media-controls {
+mp-media-controls, mp-player-controls {
   @extend mp-controls;
+}
+
+.fontPreviewArea {
+  overflow: hidden;
+  height: 371px;;
+  max-width: 660px;
+
+  background-image: url('./img/subtitles_preview.png');
+  background-position: center;
+  background-size: 100% 100%;
 }
